@@ -1,0 +1,16 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "Web for Dashcam viewer analytics",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "deep",
+    "learning",
+    "dashcam"
+  ],
+  "author": "mrboomba , star",
+  "license": "ISC"
+}

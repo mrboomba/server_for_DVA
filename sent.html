@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/home.css">
+  <script>
+  function validateForm() {
+    var x = document.forms["myForm"]["code"].value;
+    if (x == "") {
+        alert("Code must be filled out");
+        return false;
+    }
+}
+</script>
+</head>
+
+<body>
+<div class="head_menubar">
+<img class="img_icon" src="img/logo.png">
+<div class="menu_right">
+  <a href="home.html"><div class="menu_home">HOME</div></a>
+  <div class="menu_map">MAP |</div>
+</div>
+</div>
+
+<div class="border">
+<center><p>code</p></center><br>
+<form name="myForm" action="/action_page.php"
+onsubmit="return validateForm()" method="post">
+<center><input type="text" name="code" placeholder="code" class="input_text"><center>
+<input type="submit" value="OK">
+</form>
+</div>
+
+
+
+</body>
+</html>
