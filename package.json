@@ -1,5 +1,5 @@
 {
-  "name": "project",
+  "name": "dva",
   "version": "1.0.0",
   "description": "Web for Dashcam viewer analytics",
   "main": "index.js",
@@ -12,5 +12,19 @@
     "dashcam"
   ],
   "author": "mrboomba , star",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrboomba/server_for_DVA.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mrboomba/server_for_DVA/issues"
+  },
+  "homepage": "https://github.com/mrboomba/server_for_DVA#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mongoose": "^5.1.1",
+    "path": "^0.12.7"
+  }
 }
