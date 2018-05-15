@@ -8,6 +8,15 @@
 body {
   margin: 0px;
   padding: 0px;
+  font-family: Roboto, Noto, sans-serif;
+}
+.set_center{
+  position: relative;
+  float: left;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
 .img_icon {
   width: 50px;
@@ -29,7 +38,8 @@ body {
 }
 .menu_map {
   float: right;
-  margin-top: 20px;
+  margin-top: -18px;
+  margin-right: 70px;
 }
 .input_text {
   display: inline;
@@ -132,5 +142,73 @@ a:hover {
 }
 .map {
   margin-left: 30%;
-  margin-top: 13%;
+  margin-top: 48px;
+}
+#map{
+width:60%;
+height:400px;
+position: relative;
+box-sizing: border-box;
+margin: 48px auto;
+}
+
+.input_box{
+
+  width: 100%;
+  text-align: center;
+  margin: 0px auto;
+  /* height: 40px; */
+  position: relative;
+  box-sizing: border-box;
+  /* background-color: red; */
+}
+.margin-top{
+  margin-top: 48px;
+}
+
+
+.bar_right{
+  /* width: 200px; */
+  height: 100%;
+  float: right;
+  right: 0px;
+  top: 0px;
+  position: absolute;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: bold;
+  color: #373A3B;
+
+}
+.ham_box{
+  height: 100%;
+  /* width: 50px; */
+  float: right;
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-right: 12px;
+  /* background-color: red; */
+}
+.img_ham{
+  height: 33px;
+  float: right;
+  position: relative;
+  box-sizing: border-box;
+  margin-right: 24px;
+}
+.name_box{
+  height: 100%;
+  float: right;
+  position: relative;
+  box-sizing: border-box;
+  color: #2C77C3;
+  font-size: 16px;
+  margin-right: 6px;
+  margin-left: 24px;
+}
+
+.line_y{
+  color: black;
+  margin-right: 6px;
 }
