@@ -1,18 +1,21 @@
 "use strict"
 
-var path = require('path');
-var express  = require('express');
-var app      = express();
-var port     = 3000||process.env.MONGODB_URI ;
-var index    = require('./router/index')
-var configDB = require('./config/dbinit.js');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+const path = require('path');
+const express  = require('express');
+const app      = express();
+const port     = 3000||process.env.MONGODB_URI ;
+const index    = require('./router/index')
+const configDB = require('./config/dbinit.js');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+const fileUpload = require('express-fileupload');
+
 mongoose.connect(configDB.url);
 const cors = require('cors');
+app.use(fileUpload());
 app.use(cors());
 app.use(express.static(path.join(__dirname+ '/public/')));
 app.use('/',index);
