@@ -114,7 +114,7 @@
 
   </script>
 
- 
+
   <!-- </div> -->
 
   <div class="home_ok">
@@ -152,6 +152,7 @@
 
   <script>
     var position;
+    var heading = 0;
     function myMap() {
       var fenway = { lat: 14.096134, lng: 100.641822 };
       var map = new google.maps.Map(document.getElementById('map'), {
@@ -169,6 +170,10 @@
 
       panorama.addListener('position_changed', function () {
         position = panorama.getPosition();
+      });
+      panorama.addListener('pov_changed', function () {
+        heading = panorama.getPov().heading;
+
       });
       map.setStreetView(panorama);
       console.log(panorama.pov.heading)
@@ -202,8 +207,14 @@
       jQuery.each(jQuery('#vdos')[0].files, function (i, file) {
         data.append('foo', file);
       });
+      var lat ;
+      var long;
+      lat = position.lat();
+      long = position.lng();
       data.append('email', text);
-      data.append('loc', position);
+      data.append('lat', lat);
+      data.append('long', long);
+      data.append('heading', heading);
       if (document.getElementById('vdos').files.length) {
         $.ajax({
           url: "http://localhost:3000/api/upload",
@@ -213,10 +224,18 @@
           processData: false,
           data: data,
           cache: false,
-          success: function (data) {
-            loading.style.display = "none";
-            modal.style.display = "block";
-          }
+          success: function (response) {
+            console.log(response);
+            
+            if (response.status == "success") {
+              loading.style.display = "none";
+              modal.style.display = "block";
+            }
+            else {
+              loading.style.display = "none";
+            }
+          },
+
         });
       }
 
@@ -229,7 +248,7 @@
 
   </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuEn2JXIgiEofQa4MbibzUVYMoxI-gaQQ&callback=myMap"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuEn2JXIgiEofQa4MbibzUVYMoxI-gaQQ&callback=myMap"></script>
 </body>
 
 </html>

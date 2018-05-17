@@ -23,9 +23,11 @@
   "homepage": "https://github.com/mrboomba/server_for_DVA#readme",
   "dependencies": {
     "cors": "^2.8.4",
+    "crypto": "^1.0.1",
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
     "mongoose": "^5.1.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "python-shell": "^0.5.0"
   }
 }

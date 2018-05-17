@@ -4,23 +4,15 @@ var schema = new mongoose.Schema({
       type: String
     },
     filename: {
-      type: Number
+      type: String
     },
-    loc :  { 
-        type: {type:String},
-        coordinates: [Number]
-    },
-
+    loc : {
+      lat:Number,
+      long:Number
+    }
+    ,
+    heading:Number,
+    code:String
 });
 
-function getNextSequenceValue(sequenceName){
-
-    var sequenceDocument = db.counters.findAndModify({
-       query:{filename: sequenceName },
-       update: {$inc:{sequence_value:1}},
-       new:true
-    });
-     
-    return sequenceDocument.sequence_value;
- }
   module.exports = mongoose.model('user', schema);
