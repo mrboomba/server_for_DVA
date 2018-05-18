@@ -79,11 +79,11 @@ module.exports = (() => {
           var options2 = {
             mode: "text",
             pythonOptions: ["-u"], // get print results in real-time
-            scriptPath: path.join(__dirname, "../../KitiiSeg/"),
-            args: ["--input_image",path.join(__dirname, "../../result/"+newUser.filename)]
+            scriptPath: path.join(__dirname, "../../KittiSeg/"),
+            args: ["--input_image",path.join(__dirname, "../../result/"+newUser.code+"/")]
           };
-          PythonShell.run("demo.py", options2, function(err, results) {
-            if (err) throw err;
+          PythonShell.run("demo.py", options2, function(error, results) {
+            if (error) console.log(err);
             // results is an array consisting of messages collected during execution
           });
         });
