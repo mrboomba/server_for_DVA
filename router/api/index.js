@@ -85,6 +85,17 @@ module.exports = (() => {
           PythonShell.run("demo.py", options2, function(error, results) {
             if (error) console.log(err);
             // results is an array consisting of messages collected during execution
+            var options3 = {
+              mode: "text",
+              pythonOptions: ["-u"], // get print results in real-time
+              scriptPath: path.join(__dirname, "../../KittiSeg/"),
+              args: [newUser.code]
+            };
+            PythonShell.run("demo.py", options2, function(error, results2) {
+              if (error) console.log(err);
+              // results is an array consisting of messages collected during execution
+              console.log(results2)
+            });
           });
         });
         res.status(200).json({ status: "success" });
