@@ -16,11 +16,12 @@ const fileUpload = require('express-fileupload');
 mongoose.connect(configDB.url);
 const cors = require('cors');
 app.use(fileUpload());
-app.use(cors());
+//app.use(cors());
 app.use(express.static(path.join(__dirname+ '/public/')));
 app.use('/',index);
 
 
 app.listen(port,function(){
-	console.log('Magic is happend on port 3000');
+	console.log('Magic is happend on port '+port);
 })
+
