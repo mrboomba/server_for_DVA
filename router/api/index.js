@@ -88,8 +88,8 @@ module.exports = (() => {
             var options3 = {
               mode: "text",
               pythonOptions: ["-u"], // get print results in real-time
-              scriptPath: path.join(__dirname, "../../KittiSeg/"),
-              args: [newUser.code]
+              scriptPath: path.join(__dirname, "../../python/"),
+              args: [path.join(__dirname, "../../python/"),newUser.code]
             };
             PythonShell.run("demo.py", options2, function(error, results2) {
               if (error) console.log(err);

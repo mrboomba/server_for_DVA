@@ -4,7 +4,7 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from keras.models import Sequential, load_model
 import csv
-
+os.chdir(sys.argv[1])
 img_width, img_height = 150, 150
 model_path = './models/model.h5'
 model_weights_path = './models/weights.h5'
@@ -20,7 +20,7 @@ def predict(file):
   answer = np.argmax(result)
   return answer
 
-DIR = argv[0]
+DIR = argv[2]
 mydata  = []
 for i, ret in enumerate(os.walk('../result/'+DIR)):
   for i, filename in enumerate(ret[2]):
