@@ -4,7 +4,7 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from keras.models import Sequential, load_model
 import csv
-
+os.chdir(sys.argv[1])
 img_width, img_height = 150, 150
 model_path = './models/model.h5'
 model_weights_path = './models/weights.h5'
@@ -20,17 +20,20 @@ def predict(file):
   answer = np.argmax(result)
   return answer
 
-DIR = argv[0]
+DIR = sys.argv[2]
 mydata  = []
 for i, ret in enumerate(os.walk('../result/'+DIR)):
+  print(ret)
   for i, filename in enumerate(ret[2]):
     if "rb" not in filename:
       continue
     result = predict(ret[0] + '/' + filename)
     mydata.append(result)
-myFile = open(DIR+'.csv', 'w')
+myFile = open('../result/'+DIR+'/'+DIR+'.csv', 'w')
 with myFile:
     writer = csv.writer(myFile)
-    writer.writerows(myData)
+    writer.writerow("direction")
+    for x in mydata:
+       writer.writerow([x])
      
 print("Writing complete")
