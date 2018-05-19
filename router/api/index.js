@@ -75,24 +75,25 @@ module.exports = (() => {
         }
         options.args.push(newUser.filename);
         PythonShell.run("data_prepare.py", options, function(err, results) {
-          if (err) throw err;
+          if (err) console.log(err);
           var options2 = {
             mode: "text",
             pythonOptions: ["-u"], // get print results in real-time
             scriptPath: path.join(__dirname, "../../KittiSeg/"),
             args: ["--input_image",path.join(__dirname, "../../result/"+newUser.code+"/")]
           };
-          PythonShell.run("demo.py", options2, function(error, results) {
-            if (error) console.log(err);
+          PythonShell.run("demo.py", options2, function(error, results1) {
+            if (error) console.log(error);
             // results is an array consisting of messages collected during execution
-            var options3 = {
+            console.log(results1)
+	    var options3 = {
               mode: "text",
               pythonOptions: ["-u"], // get print results in real-time
-              scriptPath: path.join(__dirname, "../../KittiSeg/"),
-              args: [newUser.code]
+              scriptPath: path.join(__dirname, "../../python/"),
+              args: [path.join(__dirname, "../../python/"),newUser.code]
             };
-            PythonShell.run("demo.py", options2, function(error, results2) {
-              if (error) console.log(err);
+            PythonShell.run("predict-multiclass.py", options3, function(errors, results2) {
+              if (errors) console.log(errors);
               // results is an array consisting of messages collected during execution
               console.log(results2)
             });
