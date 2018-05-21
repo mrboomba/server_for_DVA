@@ -154,7 +154,7 @@
     var position;
     var heading = 0;
     function myMap() {
-      var fenway = { lat: 14.096134, lng: 100.641822 };
+      var fenway = { lat: 14.016264, lng: 100.563736 };
       var map = new google.maps.Map(document.getElementById('map'), {
         center: fenway,
         zoom: 14
@@ -217,7 +217,7 @@
       data.append('heading', heading);
       if (document.getElementById('vdos').files.length) {
         $.ajax({
-          url: "http://parlab.cs.tu.ac.th:3000/api/upload",
+          url: "http://localhost:3000/api/upload",
           method: "POST",
           type: "POST",
           contentType: false,

@@ -8,7 +8,6 @@
 body {
   margin: 0px;
   padding: 0px;
-  font-family: Roboto, Noto, sans-serif;
 }
 .set_center{
   position: relative;
@@ -16,7 +15,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
+  
 }
 .img_icon {
   width: 50px;
@@ -178,7 +177,7 @@ margin: 48px auto;
   font-size: 16px;
   font-weight: bold;
   color: #373A3B;
-
+  
 }
 .ham_box{
   height: 100%;
@@ -198,7 +197,7 @@ margin: 48px auto;
   margin-right: 24px;
 }
 .name_box{
-  height: 100%;
+  height: 100%; 
   float: right;
   position: relative;
   box-sizing: border-box;
@@ -211,4 +210,60 @@ margin: 48px auto;
 .line_y{
   color: black;
   margin-right: 6px;
+}
+
+
+
+.content_main{
+  width: 100%;
+  height: calc(100vh - 60px);
+  position: relative;
+  box-sizing: border-box;
+}
+.content_table{
+  width: 350px;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+  float: left;
+}
+.map_output{
+  width: calc(100% - 350px)!important;
+  height: 100%;
+  margin: 0px !important;
+  position: relative;
+  box-sizing: border-box;
+  float: left;
+}
+.img_table{
+  width: 100px;
+  margin: 0px auto;
+  position: relative;
+  box-sizing: border-box;
+}
+.col1{
+  width: 130px;
+  text-align: center;
+}
+
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  color: black;
 }

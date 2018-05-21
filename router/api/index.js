@@ -6,6 +6,9 @@ module.exports = (() => {
   const fileUpload = require("express-fileupload");
   const user = require("../../models/user");
   var PythonShell = require("python-shell");
+  var request = require("sync-request");
+
+  const csv = require("csvtojson");
 
   var options = {
     mode: "text",
@@ -13,9 +16,6 @@ module.exports = (() => {
     scriptPath: path.join(__dirname, "../../python/"),
     args: [path.join(__dirname, "../../video/")]
   };
-
-  
-
 
   const files = fs.readdirSync(__dirname);
 
@@ -29,6 +29,43 @@ module.exports = (() => {
       .slice(0, len)
       .toUpperCase(); // return required number of characters
   }
+
+  router.post("/output",function(req,res){
+    if(req.body.code){
+      user.findOne({code:req.body.code},function(err,users){
+        if(err){
+          return res.status(500).json({message:"fail"});
+        }
+        if(!users){
+          return res.status(500).json({message:"code not found"});
+        }
+        else{
+        req.session.code = users.code
+        return res.status(200).json({message:"success"});
+        }
+      })
+    }
+    else{
+      return res.status(500).json({message:"no code"});
+    }
+  })
+
+  router.get("/output",function(req,res){
+    if(req.session.code){
+      user.findOne({code:req.session.code},function(err,users){
+        if(users.location.length>0){
+          var response = {location:users.location,
+                          direction:users.direction}
+          return res.status(200).json(response);
+        }else{
+          return res.status(500).json({message:"not finish"});
+        }
+      })
+    }
+    else{
+      return res.status(500).json({message:"no code"});
+    }
+  })
 
   router.post("/upload", function(req, res) {
     console.log("UPLOAD!!");
@@ -74,33 +111,220 @@ module.exports = (() => {
           return res.status(500).send(err);
         }
         options.args.push(newUser.filename);
-        PythonShell.run("data_prepare.py", options, function(err, results) {
-          if (err) throw err;
-          var options2 = {
-            mode: "text",
-            pythonOptions: ["-u"], // get print results in real-time
-            scriptPath: path.join(__dirname, "../../KittiSeg/"),
-            args: ["--input_image",path.join(__dirname, "../../result/"+newUser.code+"/")]
-          };
-          PythonShell.run("demo.py", options2, function(error, results) {
-            if (error) console.log(err);
-            // results is an array consisting of messages collected during execution
-            var options3 = {
-              mode: "text",
-              pythonOptions: ["-u"], // get print results in real-time
-              scriptPath: path.join(__dirname, "../../python/"),
-              args: [path.join(__dirname, "../../python/"),newUser.code]
-            };
-            PythonShell.run("demo.py", options2, function(error, results2) {
-              if (error) console.log(err);
-              // results is an array consisting of messages collected during execution
-              console.log(results2)
-            });
-          });
-        });
+        // PythonShell.run("data_prepare.py", options, function(err, results) {
+        //   if (err) console.log(err);
+        //   var options2 = {
+        //     mode: "text",
+        //     pythonOptions: ["-u"], // get print results in real-time
+        //     scriptPath: path.join(__dirname, "../../KittiSeg/"),
+        //     args: [
+        //       "--input_image",
+        //       path.join(__dirname, "../../result/" + newUser.code + "/")
+        //     ]
+        //   };
+        //   PythonShell.run("demo.py", options2, function(error, results1) {
+        //     if (error) console.log(error);
+        //     // results is an array consisting of messages collected during execution
+        //     console.log(results1);
+        //     var options3 = {
+        //       mode: "text",
+        //       pythonOptions: ["-u"], // get print results in real-time
+        //       scriptPath: path.join(__dirname, "../../python/"),
+        //       args: [path.join(__dirname, "../../python/"), newUser.code]
+        //     };
+        //     PythonShell.run("predict-multiclass.py", options3, function(
+        //       errors,
+        //       results2
+        //     ) {
+        //       if (errors) console.log(errors);
+        //       // results is an array consisting of messages collected during execution
+                //  findLocation(newUser);
+        //       console.log(results2);
+        //     });
+        //   });
+        // });
+        
         res.status(200).json({ status: "success" });
       });
     });
   });
+
+
+  function findLocation(usr) {
+    var direction = [];
+    var distance = [];
+    var loc = [];
+    // var heading = 273.059470544951;  //heading straigt BBBB
+    // var heading = 1.6252514487809515;  //heading straigt AAAA
+    // var initstr = "14.063568,100.61792"  //intloc straigt BBBB
+    // var initstr = "14.061834,100.631607"  //intloc straigt AAAA
+    var initstr = usr.loc.lat+","+usr.loc.long
+    var heading = usr.heading
+
+    var response = request('GET', "https://roads.googleapis.com/v1/nearestRoads?points="+initstr+"&key=AIzaSyDNo9QiRn5XSKq6Nyt7h9qBzjSRns8pUhU");
+    console.log(JSON.parse(response.body).snappedPoints[0].location.latitude+ "," + JSON.parse(response.body).snappedPoints[0].location.longitude);  // Print the google web page.
+    loc.push({ lat: JSON.parse(response.body).snappedPoints[0].location.latitude, long: JSON.parse(response.body).snappedPoints[0].location.longitude });
+    var csvFilePath = path.join(__dirname, "../../result/CCCC/CCCC.csv");
+    csv()
+      .fromFile(csvFilePath)
+      .on("json", jsonObj => {
+        direction.push(jsonObj.direction);
+      })
+      .on("done", error => {
+        csvFilePath = path.join(__dirname, "../../result/CCCC/CCCC_acc.csv");
+        csv()
+          .fromFile(csvFilePath)
+          .on("json", jsonObj => {
+            distance.push(jsonObj.velocity * 0.277778);
+          })
+          .on("done", error => {
+            var locTmp = loc[0];
+            var str = "";
+              var strTmp = "";
+            for (var i = 0; i < direction.length; i++) {
+              
+              if(distance[i]==0)
+              continue;
+              if (direction[i] == 0) {
+                heading-=60
+                if(heading<=0){
+                  heading = 360+heading;
+                }
+                // for (var j = 0, k = heading - 90; j < 90; j++, k++) {
+                //   if (k >= 360) {
+                //     k = 1;
+                //   }
+                //   locTmp = findNewPoint(loc[loc.length - 1],k,distance[i]);
+                //   str += locTmp.lat+","+locTmp.long+"|";
+                // }
+                locTmp = findNewPoint(loc[loc.length - 1],heading,distance[i]);
+                strTmp = str
+                console.log(strTmp)
+                strTmp += locTmp.lat+","+locTmp.long+"|";
+                strTmp = strTmp.slice(0, -1);
+
+                var response = request('GET', "https://roads.googleapis.com/v1/snapToRoads?path="+strTmp+"&key=AIzaSyDNo9QiRn5XSKq6Nyt7h9qBzjSRns8pUhU");
+                locTmp ={lat:JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.latitude,long: JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.longitude}
+                
+                if (loc[loc.length - 1].lat != locTmp.long &&loc[loc.length - 1].long != locTmp.long){
+                  heading = bearingTo(loc[loc.length-1],locTmp)
+                  loc.push(locTmp);
+                  str += locTmp.lat+","+locTmp.long+"|";
+                }
+
+              } else if (direction[i] == 1) {
+                heading+=60
+                if(heading>=360){
+                  heading = heading-360;
+                }
+                locTmp = findNewPoint(loc[loc.length - 1],heading,distance[i]);
+                strTmp = str
+                console.log(strTmp)
+                strTmp += locTmp.lat+","+locTmp.long+"|";
+                strTmp = strTmp.slice(0, -1);
+                locTmp ={lat:JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.latitude,long: JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.longitude}
+                if (loc[loc.length - 1].lat != locTmp.long &&loc[loc.length - 1].long != locTmp.long){
+                  heading = bearingTo(loc[loc.length-1],locTmp)
+                  loc.push(locTmp);
+                  str += locTmp.lat+","+locTmp.long+"|";
+                  
+                }
+                
+                var response = request('GET', "https://roads.googleapis.com/v1/snapToRoads?path="+strTmp+"&key=AIzaSyDNo9QiRn5XSKq6Nyt7h9qBzjSRns8pUhU");
+                console.log(JSON.parse(response.body).snappedPoints[0].location.latitude+ "," + JSON.parse(response.body).snappedPoints[0].location.longitude);  // Print the google web page.
+                console.log(JSON.parse(response.body).snappedPoints.length-1);
+              } else {
+                locTmp = findNewPoint(loc[loc.length - 1],heading,distance[i]);
+                strTmp = str
+                console.log(strTmp)
+                strTmp += locTmp.lat+","+locTmp.long+"|";
+                strTmp = strTmp.slice(0, -1);
+
+                var response = request('GET', "https://roads.googleapis.com/v1/snapToRoads?path="+strTmp+"&key=AIzaSyDNo9QiRn5XSKq6Nyt7h9qBzjSRns8pUhU");
+                console.log(JSON.parse(response.body).snappedPoints[0].location.latitude+ "," + JSON.parse(response.body).snappedPoints[0].location.longitude);  // Print the google web page.
+                locTmp ={lat:JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.latitude,long: JSON.parse(response.body).snappedPoints[JSON.parse(response.body).snappedPoints.length-1].location.longitude}
+                console.log(JSON.parse(response.body).snappedPoints.length-1);
+                if (loc[loc.length - 1].lat != locTmp.long &&loc[loc.length - 1].long != locTmp.long){
+                  heading = bearingTo(loc[loc.length-1],locTmp)
+                  loc.push(locTmp);
+                  str += locTmp.lat+","+locTmp.long+"|";
+                }
+                
+              }
+              console.log(loc.length);
+              
+              if(loc.length === 98){
+                strr = str.split("|");
+                str = "";
+                var tmpArray =[];
+                for (var k = 1; k < loc.length; k+=2) {
+                  tmpArray.push(loc[k])
+                }
+                for(var k = 0;k<98;k+=2){
+                  str+= strr[k]+"|"
+                }
+                loc = tmpArray
+              }
+            }
+
+            loc.forEach(element => {
+              console.log(element.lat + "," + element.long + " | ");
+            });
+            usr.location = loc;
+            usr.direction = direction;
+            usr.locationString = str.slice(0, -1);
+            usr.save(function (err){
+              if(err) throw err
+            })
+          });
+      });
+  }
+
+  function toDegrees(num) {
+    return num * 180 / Math.PI;
+  }
+
+  function toRadians(num) {
+    return num * Math.PI / 180;
+  }
+
+  function bearingTo(loc1, loc2) {
+    var φ1 = toRadians(loc1.lat),
+      φ2 = toRadians(loc2.lat);
+    var Δλ = toRadians(loc2.long - loc1.long);
+    var y = Math.sin(Δλ) * Math.cos(φ2);
+    var x =
+      Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    var θ = Math.atan2(y, x);
+
+    return (toDegrees(θ) + 360) % 360;
+  }
+
+  function findNewPoint(loc, bearing, distance) {
+    radius = 6371e3;
+    var δ = Number(distance) / radius; // angular distance in radians
+    var θ = toRadians(Number(bearing));
+
+    var φ1 = toRadians(loc.lat);
+    var λ1 = toRadians(loc.long);
+
+    var sinφ1 = Math.sin(φ1),
+      cosφ1 = Math.cos(φ1);
+    var sinδ = Math.sin(δ),
+      cosδ = Math.cos(δ);
+    var sinθ = Math.sin(θ),
+      cosθ = Math.cos(θ);
+
+    var sinφ2 = sinφ1 * cosδ + cosφ1 * sinδ * cosθ;
+    var φ2 = Math.asin(sinφ2);
+    var y = sinθ * sinδ * cosφ1;
+    var x = cosδ - sinφ1 * sinφ2;
+    var λ2 = λ1 + Math.atan2(y, x);
+
+    return { lat: toDegrees(φ2), long: (toDegrees(λ2) + 540) % 360 - 180 };
+  }
+
+  //  findLocation();
+
   return router;
 })();

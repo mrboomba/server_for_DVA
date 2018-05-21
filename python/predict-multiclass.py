@@ -20,17 +20,22 @@ def predict(file):
   answer = np.argmax(result)
   return answer
 
-DIR = argv[2]
+
+DIR = sys.argv[2]
 mydata  = []
 for i, ret in enumerate(os.walk('../result/'+DIR)):
+  print(ret)
   for i, filename in enumerate(ret[2]):
     if "rb" not in filename:
       continue
     result = predict(ret[0] + '/' + filename)
-    mydata.append(result)
-myFile = open(DIR+'.csv', 'w')
+    mydata.append([result,int(filename.split("_")[0])])
+myFile = open('../result/'+DIR+'/'+DIR+'.csv', 'w')
+mydata.sort(key=lambda x: x[1])
 with myFile:
     writer = csv.writer(myFile)
-    writer.writerows(myData)
+    writer.writerow(["direction","frame"])
+    for x in mydata:
+       writer.writerow(x)
      
 print("Writing complete")

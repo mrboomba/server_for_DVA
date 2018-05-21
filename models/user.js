@@ -12,7 +12,13 @@ var schema = new mongoose.Schema({
     }
     ,
     heading:Number,
-    code:String
+    code:String,
+    location:[{
+      lat:Number,
+      long:Number
+    }],
+    direction:[Number],
+    locationString:String
 });
 
   module.exports = mongoose.model('user', schema);
