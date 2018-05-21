@@ -24,6 +24,7 @@
   "dependencies": {
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
+<<<<<<< HEAD
     "csvtojson": "^1.1.12",
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
@@ -33,5 +34,12 @@
     "python-shell": "^0.5.0",
     "request": "^2.86.0",
     "sync-request": "^6.0.0"
+=======
+    "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
+    "mongoose": "^5.1.1",
+    "path": "^0.12.7",
+    "python-shell": "^0.5.0"
+>>>>>>> 6b49fd3c9ecaeee35024c4c34e176c8f3dd5f6fd
   }
 }
