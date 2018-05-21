@@ -31,6 +31,7 @@ module.exports = (() => {
   }
 
   router.post("/output",function(req,res){
+    console.log(req.body.code)
     if(req.body.code){
       user.findOne({code:req.body.code},function(err,users){
         if(err){
@@ -55,7 +56,8 @@ module.exports = (() => {
       user.findOne({code:req.session.code},function(err,users){
         if(users.location.length>0){
           var response = {location:users.location,
-                          direction:users.direction}
+                          direction:users.direction,
+                          locationStr:users.locationString}
           return res.status(200).json(response);
         }else{
           return res.status(500).json({message:"not finish"});
