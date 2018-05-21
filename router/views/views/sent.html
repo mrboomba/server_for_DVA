@@ -4,18 +4,19 @@
 <head>
   <link rel="stylesheet" type="text/css" href="css/home.css">
   <script>
-  function validateForm() {
+  /*function validateForm() {
     var x = document.forms["myForm"]["code"].value;
     if (x == "") {
         alert("Code must be filled out");
         return false;
     }
-}
+   
+} */
 </script>
 </head>
 
-<body>
-<div class="head_menubar">
+<body ng-app="myApp" ng-controller="myCtrl">
+  <div class="head_menubar">
 <img class="img_icon" src="img/logo.png">
 <div class="menu_right">
   <a href="/"><div class="menu_home">HOME</div></a>
@@ -25,14 +26,42 @@
 
 <div class="border">
 <center><p>code</p></center><br>
-<form name="myForm" action="/action_page.php"
-onsubmit="return validateForm()" method="post">
 <center><input type="text" name="code" placeholder="code" class="input_text"><center>
 <input type="submit" value="OK">
-</form>
 </div>
-
-
-
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 </body>
+<script>
+  var app = angular.module('myApp', []);
+    app.config(function ($httpProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    });
+    app.config(function ($interpolateProvider) {
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+    });
+
+    app.controller('myCtrl', function ($scope, $http, $location, $window) {
+
+      $scope.sendCode = function (code) {
+            var data = {
+                    "code": code,
+                }
+            
+            $http({
+                method: 'POST',
+                url: "api/ouput",
+                data: JSON.stringify(data)
+            })
+                .then(function (response) {
+                    //First function handles success 
+                    console.log(response.data)
+                }, function (response) {
+                    //Second function handles error 
+                    console.log(response)
+                });
+        }
+    });
+</script>
 </html>
